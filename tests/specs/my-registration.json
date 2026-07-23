@@ -1,19 +1,170 @@
 [
   {
-    "name": "/my_registration",
+    "name": "/my_registration empty state invites Register",
     "steps": [
       {
+        "send": { "text": "/my_registration", "chatId": 501, "userId": 501 },
         "expect": [
           {
             "method": "sendMessage",
             "payload": {
-              "text": "View/update registration details"
+              "text": "No registration yet — tap Register to save your spot for the webinar."
             }
           }
-        ],
+        ]
+      }
+    ]
+  },
+  {
+    "name": "My registration menu button empty state",
+    "steps": [
+      {
+        "send": { "callback": "reg:mine", "chatId": 502, "userId": 502 },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "No registration yet — tap Register to save your spot for the webinar."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "update and cancel flow from /my_registration",
+    "steps": [
+      {
+        "send": { "text": "/start", "chatId": 510, "userId": 510 },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": { "callback": "reg:start", "chatId": 510, "userId": 510 },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          {
+            "method": "sendMessage",
+            "payload": { "text": "What's your full name?" }
+          }
+        ]
+      },
+      {
+        "send": { "text": "Casey Lee", "chatId": 510, "userId": 510 },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": { "text": "Thanks, Casey Lee. What's your email?" }
+          }
+        ]
+      },
+      {
+        "send": { "text": "casey@example.com", "chatId": 510, "userId": 510 },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Got it. What's the best phone number to reach you?"
+            }
+          }
+        ]
+      },
+      {
+        "send": { "text": "+1 (555) 111-2222", "chatId": 510, "userId": 510 },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Does this look right?\n\nName: Casey Lee\nEmail: casey@example.com\nPhone: +15551112222\n\nTap Confirm to finish, or Cancel to stop."
+            }
+          }
+        ]
+      },
+      {
         "send": {
-          "text": "/my_registration"
-        }
+          "callback": "confirm:registration",
+          "chatId": 510,
+          "userId": 510
+        },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          { "method": "editMessageText" }
+        ]
+      },
+      {
+        "send": { "text": "/my_registration", "chatId": 510, "userId": 510 },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Your registration for Buyer Bob Free Training Webinar\nDate & time coming soon\n\nName: Casey Lee\nEmail: casey@example.com\nPhone: +15551112222\nStatus: Confirmed"
+            }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "reg:update", "chatId": 510, "userId": 510 },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Send your updated full name (or the same one to keep it)."
+            }
+          }
+        ]
+      },
+      {
+        "send": { "text": "Casey L.", "chatId": 510, "userId": 510 },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": { "text": "What's the email we should use?" }
+          }
+        ]
+      },
+      {
+        "send": { "text": "casey.l@example.com", "chatId": 510, "userId": 510 },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": { "text": "And the best phone number?" }
+          }
+        ]
+      },
+      {
+        "send": { "text": "5553334444", "chatId": 510, "userId": 510 },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Updated. Here's what we have on file:\n\nYour registration for Buyer Bob Free Training Webinar\nDate & time coming soon\n\nName: Casey L.\nEmail: casey.l@example.com\nPhone: 5553334444\nStatus: Confirmed"
+            }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "reg:drop", "chatId": 510, "userId": 510 },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "Your registration is cancelled. You're welcome back anytime — tap Register to sign up again."
+            }
+          }
+        ]
+      },
+      {
+        "send": { "text": "/my_registration", "chatId": 510, "userId": 510 },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "No registration yet — tap Register to save your spot for the webinar."
+            }
+          }
+        ]
       }
     ]
   }

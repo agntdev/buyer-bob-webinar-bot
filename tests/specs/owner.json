@@ -1,0 +1,76 @@
+[
+  {
+    "name": "non-admin cannot open owner settings",
+    "steps": [
+      {
+        "send": { "callback": "owner:menu", "chatId": 300, "userId": 300 },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "Owner settings are only available to configured admins."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "admin can open owner settings and set capacity",
+    "steps": [
+      {
+        "send": { "callback": "owner:menu", "chatId": 1, "userId": 1 },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          { "method": "editMessageText" }
+        ]
+      },
+      {
+        "send": { "callback": "owner:capacity", "chatId": 1, "userId": 1 },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Send the max number of registrations (a whole number)."
+            }
+          }
+        ]
+      },
+      {
+        "send": { "text": "250", "chatId": 1, "userId": 1 },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": { "text": "Capacity set to 250." }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "owner:retention", "chatId": 1, "userId": 1 },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "How many days should we keep registration data? Send 0 to keep forever."
+            }
+          }
+        ]
+      },
+      {
+        "send": { "text": "90", "chatId": 1, "userId": 1 },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "We'll keep registration data for 90 days."
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
+

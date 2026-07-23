@@ -5,8 +5,31 @@ import type { StorageAdapter } from "grammy";
 // The per-chat session shape (ephemeral conversation state only). Extend as the
 // bot grows. Durable domain data must NOT live here — use the toolkit's
 // persistent storage (see AGENTS.md).
+/** Multi-step conversation steps for registration, updates, and owner setup. */
+export type FlowStep =
+  | "idle"
+  | "awaiting_name"
+  | "awaiting_email"
+  | "awaiting_phone"
+  | "confirming"
+  | "updating_name"
+  | "updating_email"
+  | "updating_phone"
+  | "owner_title"
+  | "owner_datetime"
+  | "owner_capacity"
+  | "owner_admin_chat"
+  | "owner_admin_user"
+  | "owner_retention";
+
 export interface Session {
-  // example: step?: "awaiting_amount";
+  step?: FlowStep;
+  /** Draft fields collected during registration / update. */
+  draftName?: string;
+  draftEmail?: string;
+  draftPhone?: string;
+  /** Epoch ms when the current flow times out. */
+  flowExpiresAt?: number;
 }
 
 export type Ctx = BotContext<Session>;

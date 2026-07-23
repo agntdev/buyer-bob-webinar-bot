@@ -8,9 +8,13 @@ async function main() {
     process.exit(1);
   }
   const bot = await buildBot(token);
-  // Publish the "/" command list to Telegram (discoverability). A button-first
-  // bot exposes only /start + /help; everything else is reached via menu buttons.
-  await setDefaultCommands(bot);
+  // Publish the "/" command list (discoverability). Keep the surface small —
+  // features are button-first; a few power shortcuts are fine for admins.
+  await setDefaultCommands(bot, [
+    { command: "my_registration", description: "View or update your signup" },
+    { command: "export_csv", description: "Admin: export registrations CSV" },
+    { command: "cancel", description: "Cancel the current step" },
+  ]);
   bot.start();
 }
 

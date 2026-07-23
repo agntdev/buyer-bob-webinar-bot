@@ -1,0 +1,80 @@
+[
+  {
+    "name": "non-admin export is denied",
+    "steps": [
+      {
+        "send": { "text": "/export_csv", "chatId": 200, "userId": 200 },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "That's an admin tool — only configured admins can export registrations."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "admin export with empty list",
+    "steps": [
+      {
+        "send": { "text": "/export_csv", "chatId": 1, "userId": 1 },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "No registrations yet — nothing to export."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "admin export after a registration sends CSV",
+    "steps": [
+      {
+        "send": { "callback": "reg:start", "chatId": 210, "userId": 210 },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          { "method": "sendMessage", "payload": { "text": "What's your full name?" } }
+        ]
+      },
+      {
+        "send": { "text": "Jamie Fox", "chatId": 210, "userId": 210 },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": { "text": "jamie@example.com", "chatId": 210, "userId": 210 },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": { "text": "5550001111", "chatId": 210, "userId": 210 },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": {
+          "callback": "confirm:registration",
+          "chatId": 210,
+          "userId": 210
+        },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          { "method": "editMessageText" }
+        ]
+      },
+      {
+        "send": { "text": "/export_csv", "chatId": 1, "userId": 1 },
+        "expect": [
+          { "method": "sendMessage" },
+          { "method": "sendDocument" },
+          {
+            "method": "sendMessage",
+            "payload": { "text": "CSV export complete." }
+          }
+        ]
+      }
+    ]
+  }
+]

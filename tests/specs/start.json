@@ -1,14 +1,28 @@
 [
   {
-    "name": "/start replies with the welcome + main menu",
+    "name": "/start replies with webinar welcome + main menu",
     "steps": [
       {
         "send": { "text": "/start" },
         "expect": [
           {
             "method": "sendMessage",
-            "payload": { "text": "👋 Welcome! Tap a button below to get started." }
+            "payload": {
+              "text": "Welcome to Buyer Bob Free Training Webinar!\n\nBuyer Bob Free Training Webinar\nDate & time coming soon\n\nTap a button below to register or manage your spot."
+            }
           }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Back to menu re-renders the welcome",
+    "steps": [
+      {
+        "send": { "callback": "menu:main" },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          { "method": "editMessageText" }
         ]
       }
     ]
