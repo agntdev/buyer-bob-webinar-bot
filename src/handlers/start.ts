@@ -1,24 +1,44 @@
 import { Composer } from "grammy";
 import type { Ctx } from "../bot.js";
 import { mainMenuKeyboard } from "../toolkit/index.js";
+import { formatWebinarLine } from "../lib/format.js";
+import { getWebinar } from "../lib/store.js";
 
-// The /start handler renders the bot's MAIN MENU — the primary way users operate
-// a button-first bot. A feature adds its own button by calling
-// `registerMainMenuItem(...)` in its own `src/handlers/<slug>.ts`; this handler
-// renders whatever is registered (plus a Help button), so you do NOT edit this
-// file to add a feature. Send ONE message — no placeholder line above the menu.
+// /start — hero + main menu. Features register their own buttons via
+// registerMainMenuItem; this handler only renders the aggregate keyboard.
 const composer = new Composer<Ctx>();
 
-const WELCOME = "👋 Welcome! Tap a button below to get started.";
+export async function welcomeText(): Promise<string> {
+  const webinar = await getWebinar();
+  return (
+    `Welcome to ${webinar.title}!\n\n` +
+    `${formatWebinarLine(webinar)}\n\n` +
+    `Tap a button below to register or manage your spot.`
+  );
+}
 
 composer.command("start", async (ctx) => {
-  await ctx.reply(WELCOME, { reply_markup: mainMenuKeyboard() });
+  // Clear any half-finished wizard when the user restarts.
+  ctx.session.step = "idle";
+  ctx.session.draftName = undefined;
+  ctx.session.draftEmail = undefined;
+  ctx.session.draftPhone = undefined;
+  ctx.session.flowExpiresAt = undefined;
+  await ctx.reply(await welcomeText(), { reply_markup: mainMenuKeyboard(1) });
 });
 
 // "Back to menu" — re-render the main menu in place from any sub-view.
 composer.callbackQuery("menu:main", async (ctx) => {
   await ctx.answerCallbackQuery();
-  await ctx.editMessageText(WELCOME, { reply_markup: mainMenuKeyboard() });
+  ctx.session.step = "idle";
+  try {
+    await ctx.editMessageText(await welcomeText(), {
+      reply_markup: mainMenuKeyboard(1),
+    });
+  } catch {
+    // Message may be too old to edit — send a fresh one.
+    await ctx.reply(await welcomeText(), { reply_markup: mainMenuKeyboard(1) });
+  }
 });
 
 export default composer;

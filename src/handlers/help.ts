@@ -2,17 +2,15 @@ import { Composer } from "grammy";
 import type { Ctx } from "../bot.js";
 import { inlineButton, inlineKeyboard } from "../toolkit/index.js";
 
-// /help — plain-language explanation for non-technical users. This bot is
-// button-driven: tell the user to tap /start to open the menu rather than listing
-// slash commands. The same text is shown when the user taps the Help button on the
-// main menu (`menu:help`). Enhance the copy for your specific bot; keep it short.
 const composer = new Composer<Ctx>();
 
 const HELP =
-  "ℹ️ Tap /start to open the menu, then pick what you want from the buttons.\n\n" +
-  "Everything in this bot is reachable by tapping — you don't need to remember any commands.";
+  "This bot signs you up for Buyer Bob's free training webinar.\n\n" +
+  "Tap /start, then Register — we'll ask for your name, email, and phone.\n" +
+  "You can review or change your details anytime from My registration.\n\n" +
+  "Need to stop mid-signup? Tap Cancel or send /cancel.";
 
-const backToMenu = inlineKeyboard([[inlineButton("⬅️ Back to menu", "menu:main")]]);
+const backToMenu = inlineKeyboard([[inlineButton("Back to menu", "menu:main")]]);
 
 composer.command("help", async (ctx) => {
   await ctx.reply(HELP);
@@ -20,7 +18,11 @@ composer.command("help", async (ctx) => {
 
 composer.callbackQuery("menu:help", async (ctx) => {
   await ctx.answerCallbackQuery();
-  await ctx.editMessageText(HELP, { reply_markup: backToMenu });
+  try {
+    await ctx.editMessageText(HELP, { reply_markup: backToMenu });
+  } catch {
+    await ctx.reply(HELP, { reply_markup: backToMenu });
+  }
 });
 
 export default composer;

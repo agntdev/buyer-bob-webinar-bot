@@ -1,19 +1,18 @@
 [
   {
-    "name": "Confirm Registration",
+    "name": "Confirm without draft asks user to register first",
     "steps": [
       {
+        "send": { "callback": "confirm:registration" },
         "expect": [
+          { "method": "answerCallbackQuery" },
           {
             "method": "sendMessage",
             "payload": {
-              "text": "Finalize registration after providing details"
+              "text": "I don't have your details yet — tap Register to walk through signup first."
             }
           }
-        ],
-        "send": {
-          "callback": "confirm:registration"
-        }
+        ]
       }
     ]
   }

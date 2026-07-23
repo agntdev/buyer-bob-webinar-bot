@@ -1,0 +1,122 @@
+[
+  {
+    "name": "end-to-end registration with confirmation and admin alert",
+    "steps": [
+      {
+        "send": { "text": "/start", "chatId": 100, "userId": 100 },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": { "callback": "reg:start", "chatId": 100, "userId": 100 },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          {
+            "method": "sendMessage",
+            "payload": { "text": "What's your full name?" }
+          }
+        ]
+      },
+      {
+        "send": { "text": "Alex Rivera", "chatId": 100, "userId": 100 },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": { "text": "Thanks, Alex Rivera. What's your email?" }
+          }
+        ]
+      },
+      {
+        "send": { "text": "not-an-email", "chatId": 100, "userId": 100 },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "That doesn't look like an email — try again (like you@example.com)."
+            }
+          }
+        ]
+      },
+      {
+        "send": { "text": "alex@example.com", "chatId": 100, "userId": 100 },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Got it. What's the best phone number to reach you?"
+            }
+          }
+        ]
+      },
+      {
+        "send": { "text": "abc", "chatId": 100, "userId": 100 },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "I couldn't read that phone number — send digits (with optional + country code)."
+            }
+          }
+        ]
+      },
+      {
+        "send": { "text": "+1 (555) 987-6543", "chatId": 100, "userId": 100 },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Does this look right?\n\nName: Alex Rivera\nEmail: alex@example.com\nPhone: +15559876543\n\nTap Confirm to finish, or Cancel to stop."
+            }
+          }
+        ]
+      },
+      {
+        "send": {
+          "callback": "confirm:registration",
+          "chatId": 100,
+          "userId": 100
+        },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "You're registered for Buyer Bob Free Training Webinar!\n\nDate & time coming soon\n\nName: Alex Rivera\nEmail: alex@example.com\nPhone: +15559876543\n\nWe'll be in touch with details. You can update your info anytime from My registration."
+            }
+          },
+          {
+            "method": "sendMessage",
+            "payload": {
+              "chat_id": 999
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "cancel mid registration",
+    "steps": [
+      {
+        "send": { "callback": "reg:start", "chatId": 120, "userId": 120 },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          {
+            "method": "sendMessage",
+            "payload": { "text": "What's your full name?" }
+          }
+        ]
+      },
+      {
+        "send": { "text": "/cancel", "chatId": 120, "userId": 120 },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Cancelled. Tap /start anytime to begin again."
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
